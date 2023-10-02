@@ -283,3 +283,78 @@ Canonical For loop ( no break )
 		- master
 	- inside a critical region
 		- ordered region
+---
+ - bunch of examples, watch vid
+ - cant keep ordered right (inside/next) another ordered
+ #### Matrix Multiplication
+ - normal code
+ ```
+ for(int i = 0;i<n;++i)
+ {
+	 for(int j = 0;j<n;++j)
+	 {
+		 c[i][j] = 0.0;
+		 for(int k = 0;k<n;++k)
+		 {
+			 c[i][j] += a[i][k] * b[k][j];
+		 }
+	 }
+ }
+ ```
+ - with omp
+```
+#pragma omp parallel for
+ for(int i = 0;i<n;++i)
+ {
+	 #pragma omp parallel for
+	 for(int j = 0;j<n;++j)
+	 {
+		 int sum = 0;
+		 #pragma omp parallel for firstprivate(sum) reduction(+:sum)
+		 for(int k = 0;k<n;++k)
+		 {
+			 sum = a[i][k] * b[k][j];
+			 c[i][j] = sum;  
+		 }
+	 }
+ } 
+```
+---
+#### Modes of Parallel Computation
+- abstract(verb) stuff
+- should track performance
+- general classes
+	- shared mem vs distributed mem
+	- sync(pram) vs async
+- PRAM model
+	- synch, shared mem
+	- arbitrary number of processors, each
+		- has local mem
+		- arbitrary number of cells(mem loc)
+		- know its ID
+		- can access a shared memory location in constant time
+	-  At each time step, each P$_i$ can 
+		- read some mem cell
+		- perform local computation step
+		- write a mem cell
+		- co - access may be restricted
+	- Thus a pair of processors can communicate in two steps - constant time
+	- In/Outputs are placed at designated addresses
+	- each instruction take O(1) time. basic instructions
+	- Processors are synch. Although Async PRAM models exist
+	- Cost analysis
+		- time taken by longest running processor
+		- total number of memory cells accessed
+		- maximum number of active processors
+- Shared mem Access models
+	- EREW (Exclusive read Exclusive write)
+	- CREW (Concurrent read Exclusive write)
+	- ERCW - least used
+	- CRCW - 'most powerful' 
+	- For concurrent writes -
+		- Priority CW (normally lower index)
+		- Common CW - succeeds only if all writes have the same value
+		- Arbitrary/Random CW - guess
+	- In order of power - 
+		- EREW <= CREW <= Common <= Arbitrary <= Priority
+		- higher can simulate lower
