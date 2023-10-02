@@ -142,3 +142,144 @@ And there are some n number of processors. For x of them, b1 < b2 and for y of t
 - Somethings are automatically flushed, like all variables at the end of a parallel construct
 - Sometimes compiler reordering of shared variables can cause deadlocks
 ---
+#### Thread control
+- Environment variables
+	- OMP_NUM_THREADS  = Number of threads
+		- omp_set_num_threads
+		- omp_get_max_threads
+		- Initial value = implementation defined
+	- OMP_DYNAMIC = how work among the threads is allocated
+		- opm_set_dynamic
+		- opm_get_dynamic
+		- implementation defined
+	- OMP_NESTED = can you nest
+		- opm_set_nested
+		- opm_get_nested
+		- false
+	- OMP_SCHEDULE = similar to dynamic
+		- implementation defined  
+- Example
+	```
+	#pragma omp parallel \
+	if(boolean) \
+	private(var1,...) \
+	firstprivate(var1,...) \
+	default(private | shared | none)
+	shared(var1,...), \
+	copyin(var1,...), \
+	reduction(operator:list) \
+	num_threads(n)
+	```
+	- If(boolean) if you want to make the execution of the parallel clause conditional
+	- private() to define which variables to be private
+	- firstprivate() to initialize the variables with the values of the main thread
+	- default() to define default behavior of variables.
+	- shared() to define which variables to be shared
+	- copyin() is similar to firstprivate but for threadprivate variables(global?), and the values can come from any thread
+	- reduction() to define what to do with the n results. find sum, max, etc.
+	- num_threads to define number of threads.
+- Thread_ID usually has to be private
+- ```#pragma omp for```  for loops
+```
+/*
+this is expected to be inside a parallel construct
+so parallel -> for -> for loop
+if the middle for is missing, then each thread from the first parallel will run the loop n times.
+if the middle for is present, then the loop is shared by each thread
+*/
+#pragma omp for \
+private(var1,...) \
+firstprivate(var1,...) \
+lastprivate(var1,...) \
+reduction(operator:list) \
+ordered, \
+schedule(kind[,chunk_size]) \
+nowait
+Canonical For loop ( no break )
+```
+- 
+	- compiler put a barrier at the end(??)
+	- lastprivate() to decide values in the end for the original 
+	- ordered says there is an ordered construct inside the body. Kind of like saying two different threads cannot be there at the same time. (Critical section)
+	- Schedule divides iterations into contiguous sets, chunks
+		- static : chunks are assigned in a round robin fashion. cs ~ load/num_threads
+		- dynamic : chunks are assigned to threads as requested. default is 1
+		- guided : dynamic, with cs proportional to number of unassigned iterations / num_threads. default is 1
+		- runtime : taken from environment variable
+		- 
+	- kind is what type of distribution to do, and chunk size is in how many chunks(i.e for thread 3 do i = 10 to 13)
+---
+ - reduction ops = +, \*, & , |, ^, &&, ||
+#### Single construct
+- ```#pragma omp single```
+- only one of the threads executes this.
+- other threads wait, unless nowait is specified
+- sometimes threads may not hit single
+- also has copyprivate, which writes back to the master
+#### Sections construct
+```
+#pragma omp sections
+{
+	#pragma omp section
+	{
+	
+	}
+	#pragma omp section
+	{
+	
+	}
+	...
+}
+```
+- Basically like switch case for threads
+#### Other directives
+- ```#pragma omp master```
+	- only master executes
+	- no implied barrier
+- ```#pragma omp critical(bankbalance)```
+	- bankbalance is a section
+	- single thread at a time 
+	- applies to all threads
+	- name is optional, if anon, then global critical region
+- ```#pragma omp barrier```
+	- standalone(?)
+	- all threads must execute
+- ```#pragma omp ordered```
+	- the block is executed in sequential order
+	- loop must declare the ordered clause
+	- each thread must encounter only one ordered region
+- ```#pragma omp flush(var1,var2)```
+	- standalone
+	- only directly affects encountering thread
+	- ensure that any compiler reordering moves all flushes together(?)
+- ```#pragma omp atomic```
+	- guess
+	- only for - x++, ++x, x--, --x
+#### Helper functions
+- General
+	- void omp_set_dynamic(int);
+		- int omp_get_dynamic();
+	- void omp_set_nested(int);
+		- int omp_get_nested();
+	- int omp_get_num_procs(); 
+	- int omp_get_num_threads();
+	- int omp_get_thread_num();
+	- int omp_get_ancestor_thread_num();
+	- double omp_get_wtime();
+- Mutex
+	- void omp_init_lock(omp_lock_t \*);
+		- void omp_destroy_lock(omp_lock_t \*);
+	- void omp_set_lock(omp_lock_t \*);
+	- void omp_unset_lock(omp_lock_t \*);
+	- int omp_test_lock(omp_lock_t \*);
+#### Nesting restrictions
+- A critical region may not be nested ever inside a critical region with the same name
+	- not sufficient to prevent deadlock
+- cannot directly nest the following (work sharing = for) - 
+	- inside work-sharing, critical, ordered, or master
+		- work-sharing
+		- barrier
+	- inside work-sharing
+		- master
+	- inside a critical region
+		- ordered region
