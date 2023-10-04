@@ -358,3 +358,121 @@ Canonical For loop ( no break )
 	- In order of power - 
 		- EREW <= CREW <= Common <= Arbitrary <= Priority
 		- higher can simulate lower
+---
+ - pardo = parallel do
+ - For addition 
+	 - proc = n/2
+	 - speed up = n/log(n)
+	 - efficiency = speedup / \#proc = 1/log(n)
+	 - work = \#proc * steps =n * log(n)
+ - Membership problem
+	 - n integers in n mem cells
+	 - does 'x' exist in input
+	 - steps
+		 1) if p$_0$ broadcast x
+		 2) proc p$_i$ searches in i$^{th}$ (n/p) block and sets a flag
+		 3) p$_0$ checks if any flag is 1 and prints answer
+	 - For EREW
+		 1) 1 proc will read x, then write to another location. Then two procs will read the two spots with x, then write to two more locations and so on. So total time for all procs to know x will be log(p)
+		 2) n/p
+		 3) log(p)
+	 - For CREW
+		 1) 1
+		 2) n/p
+		 3) log(p)
+	- For CRCW
+		 1) 1
+		 2) n/p
+		 3) 1
+- Work Time Scheduling Principle
+	- t(n) steps
+	- W(n) work
+	- Time <= sum(ceil(W$_i$(n)/p)) <= floor(W(n)/p) + t(n)
+- watch vid to simulate lesser proc/mem
+- Performance evaluation 
+	- Generally use W(n) :  (work is O(n) and time is O(n) ) is better than (work is O(nlogn) and time is O(nlogn) )
+	- If W(n) is similar, use t(n)
+---
+- Brents theorem
+	- time taken by p processors = t$_p$(n) = O(W(n)/p + t(n))
+	- cost = p * t$_p$(n) = O(W(n) + p * t(n))
+	- Work = cost if : W(n) + p * t(n) = O(W(n))
+	- p = O(W(n)/t(n))
+- Optimal Summation
+	- Using n proc
+		- Work = O(n)
+		- Cost = O(n logn)
+	- Using n/log(n) proc
+		- local sum takes logn time
+		- parallel sum takes log(n/logn) = O(logn)
+		- Total steps = (2?)logn
+		- Cost = proc * steps/time = n
+	- Often useful to have large sequential sections
+-  Notions of optimality : sim to brent
+- Why PRAM
+	- easy to design and specify algos
+	- easy to analyze
+#### Bulk Synchronous Parallel Model
+- set of pairs (proc,mem)
+- point to point interconnect
+- barrier sync
+- Super step
+	- local compu
+	- comms
+	- barrier sync
+![[Pasted image 20231004171154.png]]
+- Steps are machine wide, similar to PRAM
+- simple to program and analyze algos
+- "bridges" well to physical arch
+- locality of proc or computation ignored : leaves optimizations out of the equation
+- Interconnect
+	- atmost h messages in a super step 
+	- Cost = gh = th + s(overhead)
+	- ignores message count, distribution
+- Super step cost accounting
+	- barrier  = I
+	- one step = w(local comp) + gh + I
+	- Total S steps = sigma(w) + g * sigma(h) + SI
+#### LogP Model
+- pair wise sync
+- per message overhead : accounts for latency
+- g is the minimal permissible gap between message sends from a single process
+#### Complexity class NC
+- using poly procs, you can solve the problem is polylog time
+- time = log$^{k1}$ n , procs = n$^{k2}$
+---
+- For bin search
+	- naive approach of p procs
+		- split n into n/p, each proc does bin searc
+		- time = log(n/p), work = p * log(n/p) 
+		- problem is a proc will know quickly that it doesnt have it, and one proc will keep working while others are idle
+	- second approach
+		- each checks if val is in its range with two comparisons, either checks ends or check the result of proc to the left. Then problem size will be n -> n/p -> n/p$^2$ and so on
+		- time = log(n)/log(p)
+- NP -> P, P -> NC (idk)
+#### Cache coherence
+- Snoopy
+	- all transactions to shared mem visible to all processors
+	- caches contain info on which addresses they store
+	- cache controller snoops all transactions on the bus
+	- ensures coherence if a relevant transaction
+- Memory consistency issues
+	- basically compiler might break things
+	- sometimes even network might break things
+- "Strict"
+	- global clock
+	- no two things can happen at the same time
+	- if two make requests at a similar time, the one who did it earlier should start and finish their work before second one starts. Everything is atomic
+	- someone wants to read, everyone else stops until this fellow reads
+- Practical Mem model
+	- Sequential consistency
+		- A multiprocessor is sequentially consistent if the result of any execution is the same as if the operations of all the processors were executed in some sequential order, and the operations of each individual processor appear in this sequence in the order specified by its program
+		- hard to implement, performance not great
+		```
+		r = 0;d = 0
+		t1                                           t2
+		d = 1;                                      while(!r);
+		r = 1;                                      p = d;
+		```
+		- If t2 sees r is 1, then d must be 1. Don't care about anything else
+---
