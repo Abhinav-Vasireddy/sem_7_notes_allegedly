@@ -476,3 +476,298 @@ Canonical For loop ( no break )
 		```
 		- If t2 sees r is 1, then d must be 1. Don't care about anything else
 ---
+- Seq consistency is hard to implement
+	- poor performance
+	- no re ordering
+	- new mem op cant be issued until previous one is complete
+	- more popular to simply switch to weaker models
+	- if you are writing to an L1 cache (write through) and that write is in queue, and you get a read for something else, you cannot read before that write is over, even though it doesnt affect anything, as the other procs will see a different order. this is a waste of cache
+- Causal Consistency
+	- write is causally ordered after all earlier reads/writes 
+	- read is causally ordered after write to the same variable on a processor
+- Processor Consistency
+	- All processes see memory writes for on process in the order they were issued from the process
+	- writes from different processes may be seen in a different order on different processors
+	- only the write order needs to be consistent
+	- all instances of write(x) are seen everywhere in the same order  
+- Weak Consistency
+	- sync accesses are sequentially consistent 
+	- this is open mp, sync access = flush. (technically open mp is weaker than weak)
+![[Pasted image 20231004192051.png]]
+- True sharing
+	- frequent writes to a var can create a bottleneck
+	- sol : make copies of value, one per processor
+- False
+	- two distinct vars on the same cache block
+	- sol : allocate contiguous blocks
+#### Other performance considerations
+- keep critical region short
+- limit fork join
+- invert loops(?)
+- use enough threads  
+---
+-  Converting serial to parallel
+	- Analyze which parts invite parallelization
+		- data parallel
+		- natural decomp : f(x) = h(g1(x),g2(x))
+		- recursion
+		- extract direct dependencies
+	- Identify serial program's hotspots
+	- If there is a slow stage in the pipeline, try to reconstruct it
+- Investigate the direct parallel algorithm
+- When you decompose a task into smaller tasks, try to minimize dependencies (data/task)
+- Need to find good size for a task
+	- many small tasks cause alot of dependencies
+	- few large tasks cause unnecessary idle time  
+- Communication (even indirect) always requires some level of synchronization
+- Load balancing
+- Main issues
+	- Granularity
+	- communication
+	- synchronization
+	- load balancing
+#### Communication Issues
+- Inter task comm_n has overhead
+	- sync and network congestion
+- Latency / Bandwidth tradeoff
+	- try hiding latency 
+		- by having many tasks
+		- by prefetching
+			- ex: for matrix mul, have another variable to read ahead the values, and only start computing the current values when you have the next set ready, and so on
+- sync vs async comm_n
+	- sync/blocking comm_ns require handshaking between tasks
+	- async/nonblocking allow tasks to transfer data independently from one another
+		- interleave computation with communication, hide latency
+- Scope of comm_n syncs
+	- point to point : sender receiver, producer customer
+	- collective : group/multicast, reduce, scatter/gather
+#### Synchronization
+- Barrier
+	- expensive as all threads must participate 
+	- variant called memory barrier also exists : all operations to section x of mem have to be done before section y. Bit more lightweight
+- Lock / semaphore
+	- can be blocking or non blocking
+- **"Synchronization is the largest source of errors in parallel computing"**
+	- first get syncs right before performance
+- Stick with locks
+	- reasonably efficient
+	- fits all kinds of situations
+#### Load Balancing
+- Keep tasks busy
+- keep every processor occupied all the time
+- Equally partition work, but not necessary all the time for the tasks to be similar in size 
+- Look out for hetero machines
+- dynamic work assignment 
+- use a scheduler, have alot of tasks ready
+#### Granularity
+- Typical cycle : compute then communicate/synchronize
+- Fine grain
+	- small amounts of computation between communication events
+	- easier to balance load
+- Coarse
+	- large amounts
+	- harder
+- Best one? Balance it 
+	- start with big tasks, keep reducing until you have enough
+#### Task decomp
+Categories :
+- Domain : partition data, task processes a section of data
+- Functional : task performs a share of the work. Can maintain work pool(?)
+Techniques :
+- Pipeline
+- Recursive : divide and conquer. Not necessary to be implemented "recursively"
+- Exploratory : search problems, optimization problems, game playing
+- Speculative : new tasks are generated.  speculatively execute dependent tasks. if the results are needed at a later stage keep them, otherwise discard 
+- Hybrid 
+- Static / dynamic tasks(new tasks are generated)
+#### Task Mapping : Reduce Idle Cycles
+- If you have p processors, generate 20 to 30 \* p tasks
+- Heuristics :
+	- Map independent tasks to different processes
+	- Assign tasks on critical path as soon as possible
+	- Map tasks with dense interactions together
+- Easier if number and sizes of tasks can be predicted
+	- as well as data size per task
+- Inter task interaction pattern
+	- static vs dynamic
+	- regular vs irregular
+	- read only vs read write
+	- one way vs two way
+- Static
+	- Knap sack
+	- Data partitioning
+		- array distribution
+			- block distribution
+			- cyclic
+			- block cyclic
+			- randomized block distribution
+		- graph partitioning
+		- allocate sub graphs to each processor
+	- Task partitioning
+		- task interaction graph
+		- graph cut
+- Dynamic
+	- task allocation vs work queues
+		- central or distributed
+	- Work stealing (im done with mine, if you have left i will take a part of it)
+		- how are sensing and receiving processes paired together
+		- who initiates work transfer
+		- how much work is transferred
+		- when a transfer is triggered
+#### GP TIPS
+- correct before fast
+- know your target architecture
+- know your application
+	- look for data and task parallelism
+	- try to keep threads independent
+	- low sync and comm_n
+	- start fine grained, then combine
+	- make sure "hot spots" are parallelized
+	- use thread safe libraries
+	- never assume the state of a variable or another thread. always enforce it
+---
+#### Shared Memory and Memory passing
+![[Pasted image 20231008163804.png]]
+- t1 says values a,c,b should be written to x before 0 is written to y, but that is inconsistent with t3 
+#### MPI overview
+- MPI by itself is a library specification
+- you need a library that implements it, like openMPI
+- performs message passing and more
+	- high level constructs
+		- broadcast, reduce, scatter, gather message
+	- packaging, buffering etc automatically handled
+	- Also
+		- staring and ending tasks remotely 
+		- task identification
+- Portable
+#### Running MPI
+- compile : (mpic++/mpicc) -O -o exec code.cpp
+- run : -mpirun -host host1,host2 exec args
+#### Remote Execution
+- Allow remote shell command execution
+	- using ssh
+		- without password
+- set up public private key pair blah blah blah
+#### Process organization
+- Context
+	- comm_n universe
+	- message across context have no interference
+- Groups
+	- collection of processes
+	- creates hierarchy
+- Communicator (kinda abstract of channel)
+	- Groups of processes that share a context
+	- Notion of inter-communicator
+	- Default : MPI_COMM_WORLD
+- Rank
+	- In the group associated with a communicator
+- Starting and ending 
+	- MPI_INIT(&argc, &argv) and MPI_Finalize() (required)
+- Send / recieve
+	- int MPI_Send(void* buf, int count, MPI_Datatype datatype, int dest, int tag, MPI_Comm comm)
+	- receive : source -> dest
+	- message contents : block of mem
+	- count : number of items in message
+	- message type : MPI_type of each item
+	- destination : rank of recipient
+	- tag : integer "message type"
+	- communicator
+---
+- Example
+```c++
+#include <stdio.h>
+#include <string.h>
+#include "mpi.h"
+
+#define MAXSIZE 100
+
+int main(int argc,char* argv[])
+{
+	MPI_INIT(&argc,&argv);                             //start
+
+	MPI_Comm_size(MPI_COMM_WORLD, &numProc);           //group size
+	MPI_Comm_rank(MPI_COMM_WORLD, &myRank);            //get my rank
+	doProcessing(myRank,numProc);
+	
+	MPI_Finalize();                                    //stop
+}
+```
+```c++
+if (myRank != 0) {
+	//create message
+	sprintf(mesg,"Hello form %d", myRank);
+	dest = 0;
+	MPI_send(mesg,strlen(mesg)+1,MPI_CHAR,dest,tag,MPI_COMM_WORLD);
+}
+else {
+	for(source = 0;source<numProc;++source){
+		if(MPI_Recv(mesg,MAXSIZE<MPI_CHAR,source,tag,MPI_COMM_WORLD,&status) == MPI_SUCCESS)
+		printf("Received form %d : %s\n",source,mesg);
+		else
+		printf("Received form %d and failed\n",source);
+	}
+}
+```
+- use buffer instead of sync
+#### MPI Send and Receive
+- It is blocking
+	- R blocks until message is received
+	- s may be sync or buffered
+- Standard (default) | MPI_Send
+	- "chef's choice"
+	- changes from call to call, chooses the best option
+	- implementation dependent
+	- buffering improves performance, but requires sufficient resources
+- Buffered | MPI_Bsend
+	- you provide a buffer (+size)
+	- If no receive posted, system must buffer
+- Synchronous | MPI_Ssend
+	- will complete only if receive on the other end has been accepted
+	- send can be started based on whether a matching receive was posted or not
+- Ready | MPI_Rsend
+	- Send may start only if receive has been started (doesnt matter if it completes, only started) on the other end
+	- buffer may be reused
+	- like standard but better performance
+- Only one MPI_Recv mode
+#### Message semantics
+- need to be careful about order (no global order)
+- for a matching send/recv pair, at least one of these two operations will complete
+- fairness not guaranteed
+	- a send or recv may starve because all matches are satisfied by others (kinda like race condition)
+- Resource limitations can lead to deadlocks
+- Synchronous sends rely on the least resources
+	- may be used as a debugging tool 
+-  Async (I for async?)
+	- MPI_Isend() / MPI_Irecv()
+		- non blocking
+		- blocking and non blocking send/recv can match
+		- still lower send overhead if recv has been posted 
+	- functions have extra parameter : MPI_Request \*request. 
+		- kinda like id per send
+		- use this to check if this request has succeeded or not  (for both send and recv)
+	-  MPI_Wait(&request,&status)
+		- status returns status similar to recv
+		- blocks for send until safe to reuse buffer
+			- means message was copied out or recv started
+		- blocks for receive until message is in the buffer
+			- call to send may not have returned yet
+		- request is de allocated
+		- more efficient if you have a lot of processes
+	- MPI_Test (&request, &flag, &status)
+		- does not block
+		- flag indicated whether the op is complete
+		- poll
+	- MPI_Request_get_status(&request, &flag, &status)
+		- doesnt de allocate
+	- MPI_Request_free(&request)
+		- frees request 
+	- MPI_Waitany(count, requestarray, &whichReady, status)
+		- for multiple
+	- MPI_Waitsome
+- MPI_(I?)Probe(source,tag,comm,&flag,&status)
+	- checks info about incoming messages without actually receiving them
+	- ex - useful to know message size
+	- next (matching) recv will receive it  
+- MPI_Cancel(&request)
+	- request cancellation
+	- non blocking
