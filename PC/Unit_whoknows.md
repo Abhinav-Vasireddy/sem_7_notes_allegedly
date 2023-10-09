@@ -771,3 +771,26 @@ else {
 - MPI_Cancel(&request)
 	- request cancellation
 	- non blocking
+---
+- Persistent send / recv
+	- MPI_Send_init(buf, count, datatype, dest, tag, comm, &request); MPI_Start(&request);
+		- the buffer doesnt need to be ready
+	- MPI_Start is non blocking
+	- also, Start_all, Recv_init, Bsend_init 
+- MPI_Sendrecv : does both. Does not need to be with the same person
+- can recv from any source using MPI_ANY_SOURCE as the param. But still its one at a time
+- MPI doesnt understand struct, use MPI_Datatype newtype
+- also MPI_Type_create struct (count,arr of blocklen, arr of bytedisplacemen, arr of knowntypes, &newtype) (?)
+- before using, MPIT_Type_commit(&datatype)
+- user can call pack/unpack (of variables?) into a byte array
+#### Non point to point comm_n
+- MPI_Barrier : once everyone in a group calls this func, they can proceed
+- MPI_Bcast : broadcast. everyone must call. all must agree on sender
+- MPI_Scatter, MPI_Gather, MPI_Allgather : (doesnt send same data to everyone, unlike bcast)
+- MPI_Alltoall
+- MPI_Allreduce, MPI_Reduce
+- MPI_Reduce_scatter
+- MPI_Scan, MPI_Exscan
+	- prefixes, like reduce but until a certain point
+---
+  
