@@ -793,4 +793,69 @@ else {
 - MPI_Scan, MPI_Exscan
 	- prefixes, like reduce but until a certain point
 ---
-  
+- If you want int in your struct, use MPI_INT
+- Everyone calls MPI_Reduce. fellow to receive the result is specified in the function
+- MPI_Reduce (dataArray, resultArray, count, type, MPI_SUM, root, com);
+	- data : data sent from each processor
+	- result : stores result of combining operation
+	- count : number of items in each data,result
+	- MPI_SUM : combining operation, one of a predefined set. can create your own
+	- root : rank of processor receiving data
+#### Process start
+- MPI_Comm_Spawn (command, argv, maxprocs, info, root, comm, intercomm, array_of_errcodes )
+	- children have their own MPI_COMM_WORLD
+	- may not return until MPI_INIT has been called in the children
+	- More efficient to start all processes at once
+- MPI_Win creates a window into your own location memory, through which other threads/ processors can access your local mem.
+	- kinda like shared mem
+	- MPI_Put, MPI_get
+	- for sync
+		- MPI_Win_fence : similar to barrier / flush
+		- MPI_Win_lock
+		- MPI_Win_unlock
+		- MPI_Win_start
+		- MPI_Win_complete
+		- MPI_Win_post
+		- MPI_Win_Wait
+		- MPI_Win_Test
+---
+#### Algorithms
+-  Binary Tree
+	- Time : logn, Work : n
+	- Map n/2$^i$ procs per step, step i : if !(id%2$^i$)
+- Prefix Sums
+	- P\[0] = x\[0]
+	- for i = 1 to n-1
+		- P\[i] = P\[i-1] + x\[i]
+	- time : logn, work : n
+- Mergesort(?)
+	- rank is number of elements smaller than you
+	- find rank in AUB : rank in A + rank in B
+	- using bin search
+	- time : logn, work : nlogn
+- Optimized mergesort
+	- work becomes logn
+- Fast merge
+	- time : log log n
+	- work : n log log n
+- Optimal merge
+	- time
+	- work
+- Accelerated cascading
+	- min find
+		- using n$^2$ procs
+		- time : O(1), work : O(n$^2$)
+	- optimal min find
+		-  time : log log n
+		- work : n log log n
+#### Min find review
+- constant time algo : O(n$^2$) work
+- O(logn) balanced tree approach : O(n) optimal work
+- O(log log n) doubly log depth tree approach : O(n log log n) work
+	- depth = O(log log n)
+	- children of x : root(\#nodes in tree rooted at x)
+- Best min find :
+	- switch algo in between, from optimal to doubly
+	- time : log log n
+	- work : n
+- 
