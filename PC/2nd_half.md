@@ -445,4 +445,54 @@ until next[i]==null for all i
 		- first every 4th, then every 2nd, then all
 	- node becomes full (sorted) at stage 3\*height(node)
 	- something about covers and merge time at each stage being O(1) 
-	- 
+# Lec 33
+- Optimal merge sort
+	- will be done in 3logn, so O(logn)
+	- work is O(nlogn)
+- Minimum finding
+	- lower bound - log log n
+		- p <= n
+	- some graph theory 
+		- a graph with n nodes and m edges has an independent set of at least n$^2$ / (2m+n) 
+	- min finding theory
+		- at the end of the (i+1)st step, the input may lie in the set C$_{i+1}$ as large as c$_{i+1}$ such that
+			- no two elements of C$_{i+1}$ have been compared before
+			- c$_{i+1}$ >= c$^2$$_{i}$ / (2p+c$_{i}$)
+	- basically a graph of comparisions
+	- proof?
+		- c$_{i+1}$ >= c$^2$$_{i}$ / (2p+c$_{i}$)
+			- in the beginning, c$_{i}$ is n, and p is n
+		- c$_{i+1}$ >= c$^2$$_{i}$ / 3n
+			- solving this recurrence relationship
+		- c$_{i+1}$ >= n/(3$^{2^i-1}$) c$^2$$_{i}$/3n
+		- which basically means c$_i$ <= 1 after omega(loglogn) steps
+- Similarly, other lower bounds (all theta)
+	- merging : n/p + loglogn, if p = O(nlog$^r$n)
+	- sorting : logn, if p<=n
+	- count 0s in a monotonic binary sequence : log(n/p)
+	- parity of n variables : logn / loglogn
+#### Synchronization
+- Mutex
+	- blocking
+- Lock free
+	- at least one op is going to complete in a finite amount of time
+- wait free
+	- every op will finish in a finite amount of steps
+- lock free, wait free require hardware supported atomic operations 
+	- like CAS
+```c
+old = *address;
+new = (old==compare?val:old);
+*address = new;
+return old;
+```
+#### Dynamic load balancing
+- static task list
+- while (next = worklist.front() != END)
+	- perform work
+- Find a busy proc, share its load
+- Repeat
+	- for a proc p
+	- lock it, share its remaining load
+	- unlock
+- 
