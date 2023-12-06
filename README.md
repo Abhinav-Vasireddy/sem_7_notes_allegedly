@@ -1,3 +1,194 @@
 # sem_7_notes_allegedly
 ![image](https://github.com/Abhinav-Vasireddy/sem_7_notes_allegedly/assets/79316824/6cf1ba86-41e0-4a0d-bb16-91752efdb194)
 
+## Unit 1 
+- Objectives
+	- to gain familiarity with a phenomenon or to achieve new insights into it
+	- to portray accurately the characteristics of a particular individual, situation or a group
+	- to determine the frequency with which something occurs or with which it is associated with something else
+	- to test a hypothesis of a causal relationship between variables
+- Motivation
+	- get degree and its benefits
+	- face the challenge in solving the unsolved problems
+	- intellectual joy of doing creative work
+	- service to society
+	- respectability
+- 
+
+## Unit 3
+- Hypothesis  
+	 - "Proposition or a set of proposition set forth as an explanation for the occurrence of some specified group of phenomena either asserted merely as a provisional conjecture to guide some investigation or accepted as highly probable in the light of established facts"
+	- Quite often a research hypothesis is a predictive statement, capable of being tested by scientific methods, that relates an independent variable to some dependent variable
+- Characteristics of Hypo
+	- clear and precise
+	- capable of being tested 
+		- (within reasonable time)
+	- should state a relationship between variables
+	- should be consistent
+- Null hypo : something you try to disprove or nullify
+	- Should always be specific, cant approximate
+- Alternative hypo : something you try to prove
+- Level of significance
+	- Is is an important percentage chosen with great care and reason before testing the hypothesis. If it is 5%, then that means H0 will be rejected when the observed evidence has a less than 0.05 probability of occurring when H0 is true
+- Decision rule / test of hypo
+	- It is according to this rule(number of items to test, criteria for testing, etc) whether we accept or reject H0
+- Type 1
+	- When H0 is actually true but you reject it
+- Type 2
+	- When H0 is actually false but you accept it 
+- T1 error is directly related to the significance level. Can decrease it by decreasing significance level, but with a fixed sample size, T2 error prob will increase
+- Wherever sign points to in alternate, that tailed
+- if n < 30 
+	- if pop sd is known, use z test
+	- else use t test
+- else
+	- if pop sd is known, use z test
+	- else use either
+- H0 is false or H0 is plausible, you can never say H0 is true
+- Statistical Significance
+	- If the P value is lesser than some threshold, we say P is statistically significant at that level
+	- basically if it is statistically significant, we reject H0
+- Tables
+	- purpose
+		- reference
+		- text
+	- content
+		- simple
+		- complex
+			- double
+			- triple
+			- multiple
+- Adv of table
+	- easily represents large amounts of data in an attractive fashion
+	- easy to construct and read
+- Features of a good table
+	- attractive
+	- clarity
+	- good size
+- Diff between graph and paper
+	- graph paper
+	- graph represents mathematical relationship between two varibles
+	- for freq distri and time series -> graph
+	- propaganda and publicity -> diagram
+- Results
+	- just the facts presented as tables, figures, summaries of whatever is important and noteworthy
+	- no discussion, interpretation or reference to lit survey
+	- simple, clear, complete account
+- Discussion
+	- heart of paper
+	- state your
+		- interpretations
+		- opinions
+		- implications
+		- suggestions for future research
+	- provide commentary, dont reiterate results
+	- summarize previous chapters
+	- interpret objectively and subjectively
+	- have a defensible conclusion
+	- Techniques
+		- organize it from specific to general
+		- re state the hypothesis and answer questions asked in intro
+		- explain how results relate to expectations
+		- address all results
+		- describe patterns, principles and relationships
+		- defend your answer and say others' are not satisfactory
+	- Do
+		- provide context
+		- emphaize the positive
+		- look toward the future
+	- Dont
+		- rehash results
+		- exaggerate
+		- end with it
+- Summary
+	- brief restatement of main findings
+- Conclusion
+	- interpreation of facts discussed
+	- conc purpose
+		- integrate various issues raised during discussion
+		- provide answers
+		- indetify implications
+		- highlight limiaions
+		- provide direction for future
+## Unit 4
+- IP
+	- refers to creations of the mind, such as inventions, literary and artistic works, designs, symbols, names and images used in commerce
+	- protected in law by patents, copyright, trademarks, which help people earn recognition or financial gain from what they create
+- Patent
+	- exclusive right granted for an invention
+	- right to decide whether or how this invention can be used by others
+	- in exchange for the right, the owner makes technical info about the invention public in the published patent document
+	- 20 years
+	- territorial
+- Trademark
+	- a sign of capable of distinguishing goods and service of one enterprise from another. goes way back when artisans put their sign or 'marked' their products
+- Copyright
+	- legal term used to describe the rights creators have over their literary and artistic works. the work can be books, music, paintings, sculpture and films, programs, databses, advertisement, maps and technical drawings
+- Industrial designs
+	- constitutes the ornamental or aesthetic aspect of an article. may consist of 3d features like shape or surface, or 2d features like lines or color
+- Traded secrets
+	- they are IP rights on confidential information which may be sold or licensed. The unauthorized acquisition, use or disclosure of such secret information in a manner contrary to honest commercial practices by others is regarded as an unfair practice and a violation of the trade secret protection
+- Geographical indications
+	- they are signs used on goods that have a specific geographical origin and posses qualities, reputation or characteristics that are attributable to that place of origin. Most commonly, the GI includes the name of the place of origin of the goods
+- Report
+	- Formal (technical) and informal
+	- T reports describe the process, progress or results of technical or scientific research. include indepth experimental details, data, results
+	- Steps
+		- decide on terms of reference
+		- conduct your research
+		- write an outline
+		- write first draft
+		- analyze data and record findings
+		- recommend a course of action
+		- edit and publish
+	- Characteristics
+		- clear
+		- simple
+		- impartial
+		- structured logically
+	- Types of scientific
+		- peer reviewed journal articles
+		- grant proposals
+		- lit review articles
+	- Types of academic writing
+		- descriptive
+		- analytical
+		- persuasive
+		- critical
+	- IMRAD
+	- Paper
+		- title
+		- authors
+		- abstract
+		- key words (some journals)
+		- intro
+			- problem
+			- background of problem
+			- reasons for research
+			- summarize relevant research
+			- state why you're diff
+			- briefly describe the exp or hypo
+		- methods
+			- provide enough details
+			- identify the procedures you followed
+			- explain new methodology in detail, otherwise name and cite 
+			- include freq and how you were observing data
+			- be precise in describing measurements
+		- results
+			- objectively present your findings
+			- show how this contributes
+			- follow sequence
+		- discussion
+		- ack
+		- ref
+		- app
+- Why publish
+	- increase human knowledge
+	- writing is improved
+	- sense of completion
+	- work is promoted
+- Abstract 
+	- Complete
+	- concise 
+	- clear
+	- cohesive
